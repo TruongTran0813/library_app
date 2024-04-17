@@ -17,8 +17,7 @@ on:
 jobs:
   check_pull_request:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
