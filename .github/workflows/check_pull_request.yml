@@ -26,58 +26,64 @@ jobs:
         id: get_repo_name
         run: echo "::set-output name=repo_name::$(basename "$(pwd)")"
 
-      - name: Backup
-        uses: appleboy/ssh-action@master
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY_1 }}
-          port: 22
-          host: 54.79.76.161
-          username: ubuntu
-          script: |
-            sudo mkdir -p /odoo/custom/addons_backup && sudo cp -rf /odoo/custom/addons/${{ steps.get_repo_name.outputs.repo_name }} /odoo/custom/addons_backup/${{ steps.get_repo_name.outputs.repo_name }}
+      # - name: Backup
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     key: ${{ secrets.SSH_PRIVATE_KEY_1 }}
+      #     port: 22
+      #     host: 54.79.76.161
+      #     username: ubuntu
+      #     script: |
+      #       sudo mkdir -p /odoo/custom/addons_backup && sudo cp -rf /odoo/custom/addons/${{ steps.get_repo_name.outputs.repo_name }} /odoo/custom/addons_backup/${{ steps.get_repo_name.outputs.repo_name }}
 
-      - name: Copy files to remote
-        uses: appleboy/scp-action@master
-        with:
-          host: 54.79.76.161
-          username: ubuntu
-          key: ${{ secrets.SSH_PRIVATE_KEY_1 }}
-          source: "."
-          target: "/odoo/custom/addons/${{ steps.get_repo_name.outputs.repo_name }}"
+      # - name: Copy files to remote
+      #   uses: appleboy/scp-action@master
+      #   with:
+      #     host: 54.79.76.161
+      #     username: ubuntu
+      #     key: ${{ secrets.SSH_PRIVATE_KEY_1 }}
+      #     source: "."
+      #     target: "/odoo/custom/addons/${{ steps.get_repo_name.outputs.repo_name }}"
 
-      - name: Restart - Update Odoo
-        uses: appleboy/ssh-action@master
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY_1 }}
-          port: 22
-          host: 54.79.76.161
-          username: ubuntu
-          script: |
-            sudo systemctl restart odoo
-            sudo chsh -s /bin/bash odoo
-            sudo su odoo -c 'python3 /odoo/odoo-server/odoo-bin -u ${{ steps.get_repo_name.outputs.repo_name }} -d truong --addons-path=/odoo/odoo-server/addons,/odoo/custom/addons --dev all --stop-after-init'
-      - name: Check upgrade status
-        if: ${{ failure() }}
-        uses: appleboy/ssh-action@master
-        with:
-          key: ${{ secrets.SSH_PRIVATE_KEY_1 }}
-          port: 22
-          host: 54.79.76.161
-          username: ubuntu
-          script: |
-            sudo cp -rf /odoo/custom/addons_backup/${{ steps.get_repo_name.outputs.repo_name }} /odoo/custom/addons
-            sudo rm -r /odoo/custom/addons_backup/${{ steps.get_repo_name.outputs.repo_name }}
-            sudo systemctl restart odoo
-            sudo chsh -s /bin/bash odoo
-            sudo su odoo -c 'python3 /odoo/odoo-server/odoo-bin -u ${{ steps.get_repo_name.outputs.repo_name }} -d truong --addons-path=/odoo/odoo-server/addons,/odoo/custom/addons --dev all --stop-after-init'
-      - name: Merge Pull Request If Success
-        if: ${{ success() }}
-        uses: actions/github-script@v3
-        with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.pulls.merge({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number
-            })
+      # - name: Restart - Update Odoo
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     key: ${{ secrets.SSH_PRIVATE_KEY_1 }}
+      #     port: 22
+      #     host: 54.79.76.161
+      #     username: ubuntu
+      #     script: |
+      #       sudo systemctl restart odoo
+      #       sudo chsh -s /bin/bash odoo
+      #       sudo su odoo -c 'python3 /odoo/odoo-server/odoo-bin -u ${{ steps.get_repo_name.outputs.repo_name }} -d truong --addons-path=/odoo/odoo-server/addons,/odoo/custom/addons --dev all --stop-after-init'
+      # - name: Check upgrade status
+      #   if: ${{ failure() }}
+      #   uses: appleboy/ssh-action@master
+      #   with:
+      #     key: ${{ secrets.SSH_PRIVATE_KEY_1 }}
+      #     port: 22
+      #     host: 54.79.76.161
+      #     username: ubuntu
+      #     script: |
+      #       sudo cp -rf /odoo/custom/addons_backup/${{ steps.get_repo_name.outputs.repo_name }} /odoo/custom/addons
+      #       sudo rm -r /odoo/custom/addons_backup/${{ steps.get_repo_name.outputs.repo_name }}
+      #       sudo systemctl restart odoo
+      #       sudo chsh -s /bin/bash odoo
+      #       sudo su odoo -c 'python3 /odoo/odoo-server/odoo-bin -u ${{ steps.get_repo_name.outputs.repo_name }} -d truong --addons-path=/odoo/odoo-server/addons,/odoo/custom/addons --dev all --stop-after-init'
+
+      # - name: Merge Pull Request If Success
+      #   if: ${{ success() }}
+      #   uses: actions/github-script@v3
+      #   with:
+      #     github-token: ${{secrets.GITHUB_TOKEN}}
+      #     script: |
+      #       github.pulls.merge({
+      #         owner: context.repo.owner,
+      #         repo: context.repo.repo,
+      #         pull_number: context.issue.number
+      #       })
+      - uses: actions/checkout@v0.3
+      - name: Run Codeowners merge check
+        uses: casassg/auto-merge-bot@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
