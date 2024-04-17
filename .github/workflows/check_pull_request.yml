@@ -60,9 +60,8 @@ jobs:
             sudo systemctl restart odoo
             sudo chsh -s /bin/bash odoo
             sudo su odoo -c 'python3 /odoo/odoo-server/odoo-bin -u ${{ steps.get_repo_name.outputs.repo_name }} -d truong --addons-path=/odoo/odoo-server/addons,/odoo/custom/addons --dev all --stop-after-init'
-      - name: Close Pull Request
-        if: ${{ failure() }}
-        uses: superbrothers/close-pull-request@v3
-        with:
-          # Optional. Post a issue comment just before closing a pull request.
-          comment: "This pull request has failed the test. Please check the error and try again."
+      - name: Merge Pull Request If Success
+        if: ${{ success() }}
+        uses: "pascalgn/automerge-action@v0.16.3"
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
