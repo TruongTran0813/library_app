@@ -1,0 +1,33 @@
+name: Generate Options
+
+on:
+  workflow_dispatch:
+jobs:
+  generate_options:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.ACCESS_TOKEN }}
+
+      - name: Get list of databases from Server
+        run: |
+          response=$(curl --location --request GET 'http://54.79.76.161:8069/web/database/list' \
+                    --header 'Content-Type: application/json' \
+                    --header 'Cookie: session_id=8d4b8f9a899a068e6598f22661d830a1910b2a4c' \
+                    --data '{}')
+
+          # Parse the response and construct the output
+          output=""
+          for path in $(echo $response | jq -r '.result[]')
+          do
+            output+="        - $path\n"
+          done
+
+          # Replace the $DATABASE_OPTIONS placeholder in deploy.template.yml
+          sed "s/\$DATABASE_OPTIONS/$output/g" $GITHUB_WORKSPACE/.github/workflows/deploy.template.yml > $GITHUB_WORKSPACE/.github/workflows/deploy.yml
+
+      - uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Generated database options
