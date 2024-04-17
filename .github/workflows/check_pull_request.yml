@@ -62,13 +62,7 @@ jobs:
             sudo su odoo -c 'python3 /odoo/odoo-server/odoo-bin -u ${{ steps.get_repo_name.outputs.repo_name }} -d truong --addons-path=/odoo/odoo-server/addons,/odoo/custom/addons --dev all --stop-after-init'
       - name: Close Pull Request
         if: ${{ failure() }}
-        uses: actions/github-script@v3
+        uses: superbrothers/close-pull-request@v3
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
-          script: |
-            github.pulls.update({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              pull_number: context.issue.number,
-              state: 'closed'
-            })
+          # Optional. Post a issue comment just before closing a pull request.
+          comment: "This pull request has failed the test. Please check the error and try again."
