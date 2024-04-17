@@ -82,7 +82,6 @@ jobs:
       #         repo: context.repo.repo,
       #         pull_number: context.issue.number
       #       })
-      - uses: actions/checkout@v0.3
       - name: Run Codeowners merge check
         uses: casassg/auto-merge-bot@master
         env:
