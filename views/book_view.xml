@@ -6,8 +6,8 @@
 
       <form>
         <header>
-          <button name="button_check_isbn_errror" type="object"
-            string="Check ISB Tesst" />
+          <button name="button_check_isbn" type="object"
+            string="Check ISB No Error" />
         </header>
         <sheet>
           <group name="group_top">
