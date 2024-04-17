@@ -72,6 +72,13 @@ jobs:
             sudo su odoo -c 'python3 /odoo/odoo-server/odoo-bin -u ${{ steps.get_repo_name.outputs.repo_name }} -d truong --addons-path=/odoo/odoo-server/addons,/odoo/custom/addons --dev all --stop-after-init'
       - name: Merge Pull Request If Success
         if: ${{ success() }}
-        uses: "pascalgn/automerge-action@v0.16.3"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        uses: actions/github-script@v3
+        with:
+          github-token: ${{secrets.GITHUB_TOKEN}}
+          script: |
+            github.pulls.update({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: context.issue.number,
+              state: 'closed'
+            })
