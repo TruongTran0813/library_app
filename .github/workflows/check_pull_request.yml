@@ -26,6 +26,14 @@ jobs:
         id: get_repo_name
         run: echo "::set-output name=repo_name::$(basename "$(pwd)")"
 
+      - id: automerge
+        name: automerge
+        uses: "pascalgn/automerge-action@v0.16.3"
+        permissions:
+          contents: write
+        env:
+          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
         # - name: Backup
         #   uses: appleboy/ssh-action@master
         #   with:
@@ -82,9 +90,3 @@ jobs:
         #         repo: context.repo.repo,
         #         pull_number: context.issue.number
         #       })
-      - name: automerge
-        uses: "pascalgn/automerge-action@v0.16.3"
-        permissions:
-          contents: write
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
