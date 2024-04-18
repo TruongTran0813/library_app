@@ -60,14 +60,23 @@ jobs:
       #       sudo systemctl restart odoo
       #       sudo chsh -s /bin/bash odoo
       #       sudo su odoo -c 'python3 /odoo/odoo-server/odoo-bin -u ${{ steps.get_repo_name.outputs.repo_name }} -d truong --addons-path=/odoo/odoo-server/addons,/odoo/custom/addons --dev all --stop-after-init'
-      - id: automerge
-        name: automerge
-        if: ${{ success() }}
-        uses: "pascalgn/automerge-action@v0.15.6"
-        env:
-          GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          MERGE_LABELS: ""
-      - name: feedback
-        if: ${{ steps.automerge.outputs.mergeResult == 'merged' }}
+      # - id: automerge
+      #   name: automerge
+      #   if: ${{ success() }}
+      #   uses: "pascalgn/automerge-action@v0.15.6"
+      #   env:
+      #     GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+      #     MERGE_LABELS: ""
+      # - name: feedback
+      #   if: ${{ steps.automerge.outputs.mergeResult == 'merged' }}
+      #   run: |
+      #     echo "Pull request ${{ steps.automerge.outputs.pullRequestNumber }} merged!"
+      - name: Setup git config
         run: |
-          echo "Pull request ${{ steps.automerge.outputs.pullRequestNumber }} merged!"
+          git config user.name 'token-generator-app[bot]'
+          git config user.email '82042599+token-generator-app[bot]@users.noreply.github.com'
+      - name: Auto merge pull request
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr merge --auto master
