@@ -6,7 +6,7 @@
 
       <form>
         <header>
-          <button name="button_check_isbn" type="object"
+          <button name="button_check_isbn_errrror" type="object"
             string="Check ISB 1123123" />
         </header>
         <sheet>
