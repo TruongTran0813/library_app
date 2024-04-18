@@ -79,4 +79,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          gh pr merge --auto dev
+          gh pr merge --auto dev --merge
