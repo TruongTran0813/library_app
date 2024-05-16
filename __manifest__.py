@@ -1,6 +1,6 @@
 {
     "name": "Library Management",
-    "summary": "Test2",
+    "summary": "Test21",
     "author": "Daniel Reis",
     "license": "AGPL-3",
     "website": "https://github.com/PacktPublishing" "/Odoo-14-Development-Essentials",
