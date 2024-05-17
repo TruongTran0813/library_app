@@ -1,5 +1,5 @@
 {
-    "name": "Library Management 3",
+    "name": "Library Management 5",
     "summary": "Test21",
     "author": "Daniel Reis",
     "license": "AGPL-3",
